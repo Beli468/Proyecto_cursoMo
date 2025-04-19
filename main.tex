@@ -1,0 +1,174 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+
+\setbeamertemplate{headline}{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left]{section in head/foot}%
+    \hspace{1em}\textbf{Métodos de Optimización}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right]{section in head/foot}%
+    \textbf{Universidad Nacional del Altiplano - FINESI}\hspace{1em}
+  \end{beamercolorbox}}%
+}
+
+\setbeamertemplate{footline}[frame number]
+
+\title{Universidad Nacional del Altiplano Puno}
+\subtitle{Escuela Profesional de Ingeniería Estadística e Informática}
+
+\author{
+  \textbf{Resolución de Sistemas de Ecuaciones Lineales con Python} \\
+  Usando Métodos de Sustitución, Igualación y Reducción \\
+  \vspace{0.5cm}
+  \textbf{Integrantes:} \\
+  Beatriz Umiña Machaca \\
+  Belinda Apaza Quispe \\
+  \\
+  \textbf{Docente:} \\
+  Fred Torres Cruz
+}
+
+\institute{}
+
+\date{16 de abril de 2025}
+
+
+\begin{document}
+\frame{\titlepage}
+
+
+\section{Sistema de Ecuaciones}
+\begin{frame}{¿Qué es un Sistema de Ecuaciones?}
+  \begin{itemize}
+    \item Un \textbf{sistema de ecuaciones} es un conjunto de dos o más ecuaciones con varias incognitas.
+    \item El objetivo es encontrar los valores de esas variables.
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  \textbf{Ejemplo:}
+  \[
+    \begin{cases}
+      2x + y = 5 \\
+      x - y = 1
+    \end{cases}
+  \]
+
+  \vspace{0.3cm}
+  \textbf{Métodos comunes para resolverlos:}
+  \begin{itemize}
+    \item \textbf{Sustitución:} Se despeja una variable en una ecuación y se sustituye en la otra.
+    \item \textbf{Igualación:} Se despeja la misma variable en ambas ecuaciones y se igualan.
+    \item \textbf{Reducción:} Se suman o restan las ecuaciones para eliminar una variable.
+  \end{itemize}
+\end{frame}
+
+
+\section{Objetivo}
+\begin{frame}{Objetivo del Programa}
+  \textbf{Objetivo:} \\
+  Crear un programa que resuelva un sistema de dos ecuaciones lineales con dos incógnitas \(x\) y \(y\), utilizando tres métodos algebraicos:
+  \begin{itemize}
+    \item \textbf{Sustitución:} Se despeja una variable de una ecuación y se sustituye en la otra.
+    \item \textbf{Igualación:} Se despejan las mismas variables en ambas ecuaciones y se igualan.
+    \item \textbf{Reducción:} Se suman o restan las ecuaciones para eliminar una variable.
+  \end{itemize}
+\end{frame}
+
+\section{Lógica del Programa}
+\begin{frame}{Lógica del Programa}
+  \begin{itemize}
+    \item Ingreso de ecuaciones por el usuario.
+    \item Conversión de ecuaciones de texto a expresión algebraica.
+    \item Menú con 3 métodos para resolver el sistema.
+    \item Cálculo y visualización de resultados.
+  \end{itemize}
+\end{frame}
+
+\section{Librerías}
+\begin{frame}{Librerías Usadas}
+  \texttt{import re} \\
+  \texttt{from sympy import symbols, Eq, solve, sympify}
+  \vspace{0.5cm}
+  \begin{itemize}
+    \item \textbf{re:} Para manipular texto (expresiones regulares).
+    \item \textbf{sympy:} Librería simbólica para resolver ecuaciones, trabajar con símbolos, etc.
+  \end{itemize}
+\end{frame}
+
+\section{Parseo de Ecuaciones}
+\begin{frame}{Ingreso y Parseo de Ecuaciones}
+  \texttt{def parsear\_ecuacion(ecuacion\_str):}
+  \begin{itemize}
+    \item Elimina espacios innecesarios.
+    \item Usa expresiones regulares para separar la ecuación.
+    \item Convierte cadenas de texto en expresiones simbólicas.
+  \end{itemize}
+\end{frame}
+
+\section{Métodos para Resolver}
+\begin{frame}{Método de Sustitución}
+  \textbf{Pasos:}
+  \begin{enumerate}
+    \item Se despeja una variable (x o y) de una de las ecuaciones.
+    \item Se sustituye en la otra ecuación.
+    \item Se resuelve la ecuación resultante y luego se halla la otra variable.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Método de Igualación}
+  \textbf{Pasos:}
+  \begin{enumerate}
+    \item Se despeja la misma variable en ambas ecuaciones.
+    \item Se igualan las dos expresiones resultantes.
+    \item Se resuelve la ecuación para una variable, luego la otra.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Método de Reducción}
+  \textbf{Pasos:}
+  \begin{enumerate}
+    \item Se multiplican las ecuaciones si es necesario para igualar coeficientes.
+    \item Se suman o restan las ecuaciones para eliminar una variable.
+    \item Se resuelve y se halla la variable faltante.
+  \end{enumerate}
+\end{frame}
+
+\section{Menú Interactivo}
+\begin{frame}{Menú Interactivo en Python}
+\begin{itemize}
+  \item Menú con opciones 1, 2, 3 para elegir método.
+  \item Opción 4 para salir del programa.
+  \item El usuario puede repetir el proceso las veces que desee.
+\end{itemize}
+\end{frame}
+
+\section{Ejemplo de Uso}
+\begin{frame}{Ejemplo de Ejecución}
+\textbf{Ecuaciones:}
+\begin{itemize}
+  \item \(2x + y = 5\)
+  \item \(x - y = 1\)
+\end{itemize}
+\textbf{Resultado esperado:}
+\begin{itemize}
+  \item Se puede resolver con cualquiera de los tres métodos.
+  \item Muestra \(x = 2\), \(y = 1\)
+\end{itemize}
+\end{frame}
+
+\section{Conclusiones}
+\begin{frame}{Conclusiones}
+\begin{itemize}
+  \item El programa permite resolver sistemas lineales de forma automática.
+  \item Es interactivo y didáctico.
+  \item Útil para estudiantes que aprenden álgebra y programación.
+\end{itemize}
+\end{frame}
+
+\end{document}

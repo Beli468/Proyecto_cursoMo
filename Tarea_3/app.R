@@ -70,7 +70,6 @@ server <- function(input, output) {
     # si es 0
     expr_x <- function(y) (c2 - b2 * y) / a2
     expr_ec1 <- function(y) a1 * expr_x(y) + b1 * y
-    #usa sustitución e uniroot() para encontrar el valor de y
     y_val <- uniroot(function(y) expr_ec1(y) - c1, c(-1e6, 1e6))$root
     x_val <- expr_x(y_val)
     
@@ -80,7 +79,6 @@ server <- function(input, output) {
   resolver_igualacion <- function(ec1, ec2) {
     a1 <- ec1[1]; b1 <- ec1[2]; c1 <- ec1[3]
     a2 <- ec2[1]; b2 <- ec2[2]; c2 <- ec2[3]
-    #Usa igualación para encontrar y
     y_val <- (c1 * a2 - c2 * a1) / (a2 * b1 - a1 * b2)
     x_val <- (c1 - b1 * y_val) / a1
     

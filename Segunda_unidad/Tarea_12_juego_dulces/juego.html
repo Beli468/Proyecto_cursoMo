@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Supervivencia de Dulces</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .inventory {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        
+        .candy-count {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .candy-count.limon {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .candy-count.huevo {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+        
+        .candy-count.pera {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+        
+        .candy-emoji {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .candy-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .candy-label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+        
+        .log {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .log-entry.info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+        
+        .log-entry.warning {
+            background: #fef5e7;
+            color: #744210;
+        }
+        
+        .simulation-panel {
+            grid-column: 1 / -1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍭 Juego de Supervivencia de Dulces</h1>
+            <p>Colecciona limón, huevo y pera para obtener un chupetín y sobrevivir</p>
+        </div>
+        
+        <div class="game-board">
+            <div class="panel">
+                <h2>🎒 Inventario Actual</h2>
+                <div class="inventory">
+                    <div class="candy-count limon">
+                        <div class="candy-emoji">🍋</div>
+                        <div class="candy-number" id="limon-count">0</div>
+                        <div class="candy-label">Limón</div>
+                    </div>
+                    <div class="candy-count huevo">
+                        <div class="candy-emoji">🥚</div>
+                        <div class="candy-number" id="huevo-count">0</div>
+                        <div class="candy-label">Huevo</div>
+                    </div>
+                    <div class="candy-count pera">
+                        <div class="candy-emoji">🍐</div>
+                        <div class="candy-number" id="pera-count">0</div>
+                        <div class="candy-label">Pera</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="recibirDulces()">🎲 Recibir 2 Dulces</button>
+                    <button class="btn btn-success" onclick="crearChupetin()" id="crear-btn" disabled>🍭 Crear Chupetín</button>
+                    <button class="btn btn-warning" onclick="usarComodin()" id="comodin-btn" disabled>⭐ Usar Comodín</button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="chupetines-count">0</div>
+                        <div class="stat-label">Chupetines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="comodines-count">0</div>
+                        <div class="stat-label">Comodines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="turnos-count">0</div>
+                        <div class="stat-label">Turnos</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>📊 Optimización</h2>
+                <div id="recomendacion" class="log-entry info">
+                    Inicia el juego para recibir recomendaciones estratégicas
+                </div>
+                
+                <h3 style="margin-top: 20px; margin-bottom: 10px;">📝 Registro de Acciones</h3>
+                <div class="log" id="log"></div>
+            </div>
+            
+            <div class="panel simulation-panel">
+                <h2>🎯 Simulación Automática</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="simularJuego()">🚀 Simular 1000 Juegos</button>
+                    <button class="btn btn-success" onclick="reiniciarJuego()">🔄 Reiniciar</button>
+                </div>
+                
+                <div id="simulation-progress" style="display: none;">
+                    <p>Simulando... <span id="progress-text">0%</span></p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div id="simulation-results" style="display: none;">
+                    <h3>Resultados de la Simulación:</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="sim-supervivientes">0</div>
+                            <div class="stat-label">% Supervivencia</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="sim-turnos-promedio">0</div>
+                            <div class="stat-label">Turnos Promedio</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="sim-estrategia">-</div>
+                            <div class="stat-label">Mejor Estrategia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            limon: 0,
+            huevo: 0,
+            pera: 0,
+            chupetines: 0,
+            comodines: 0,
+            turnos: 0
+        };
+
+        const dulces = ['limon', 'huevo', 'pera'];
+        const emojis = { limon: '🍋', huevo: '🥚', pera: '🍐' };
+
+        function actualizarUI() {
+            document.getElementById('limon-count').textContent = gameState.limon;
+            document.getElementById('huevo-count').textContent = gameState.huevo;
+            document.getElementById('pera-count').textContent = gameState.pera;
+            document.getElementById('chupetines-count').textContent = gameState.chupetines;
+            document.getElementById('comodines-count').textContent = gameState.comodines;
+            document.getElementById('turnos-count').textContent = gameState.turnos;
+
+            // Habilitar botón de crear chupetín si es posible
+            const puedeCrear = gameState.limon > 0 && gameState.huevo > 0 && gameState.pera > 0;
+            document.getElementById('crear-btn').disabled = !puedeCrear;
+
+            // Habilitar botón de comodín
+            document.getElementById('comodin-btn').disabled = gameState.comodines === 0;
+
+            actualizarRecomendacion();
+        }
+
+        function actualizarRecomendacion() {
+            const faltante = [];
+            if (gameState.limon === 0) faltante.push('🍋 Limón');
+            if (gameState.huevo === 0) faltante.push('🥚 Huevo');
+            if (gameState.pera === 0) faltante.push('🍐 Pera');
+
+            let recomendacion = '';
+            if (faltante.length === 0) {
+                recomendacion = '✅ ¡Perfecto! Puedes crear un chupetín. ¡Hazlo ahora!';
+            } else if (faltante.length === 1) {
+                recomendacion = `🎯 Te falta solo: ${faltante[0]}. ${gameState.comodines > 0 ? 'Usa tu comodín para obtenerlo.' : 'Muy cerca de sobrevivir!'}`;
+            } else {
+                recomendacion = `📋 Te faltan: ${faltante.join(', ')}. ${gameState.comodines > 0 ? 'Considera usar un comodín.' : 'Sigue recolectando dulces.'}`;
+            }
+
+            document.getElementById('recomendacion').textContent = recomendacion;
+        }
+
+        function agregarLog(mensaje, tipo = 'info') {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${tipo}`;
+            entry.textContent = `Turno ${gameState.turnos}: ${mensaje}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function recibirDulces() {
+            gameState.turnos++;
+            const dulce1 = dulces[Math.floor(Math.random() * dulces.length)];
+            const dulce2 = dulces[Math.floor(Math.random() * dulces.length)];
+            
+            gameState[dulce1]++;
+            gameState[dulce2]++;
+
+            agregarLog(`Recibiste: ${emojis[dulce1]} ${dulce1} y ${emojis[dulce2]} ${dulce2}`);
+            actualizarUI();
+        }
+
+        function crearChupetin() {
+            if (gameState.limon > 0 && gameState.huevo > 0 && gameState.pera > 0) {
+                gameState.limon--;
+                gameState.huevo--;
+                gameState.pera--;
+                gameState.chupetines++;
+                gameState.comodines++;
+
+                agregarLog('🍭 ¡Chupetín creado! Ganaste 1 comodín', 'success');
+                actualizarUI();
+            }
+        }
+
+        function usarComodin() {
+            if (gameState.comodines > 0) {
+                // Lógica optimizada: elegir el dulce que más necesitamos
+                const counts = [gameState.limon, gameState.huevo, gameState.pera];
+                const minIndex = counts.indexOf(Math.min(...counts));
+                const dulceElegido = dulces[minIndex];
+                
+                gameState[dulceElegido]++;
+                gameState.comodines--;
+
+                agregarLog(`⭐ Comodín usado para obtener: ${emojis[dulceElegido]} ${dulceElegido}`, 'warning');
+                actualizarUI();
+            }
+        }
+
+        function simularJuego() {
+            const numSimulaciones = 1000;
+            let supervivientes = 0;
+            let totalTurnos = 0;
+            
+            document.getElementById('simulation-progress').style.display = 'block';
+            document.getElementById('simulation-results').style.display = 'none';
+
+            let completed = 0;
+
+            function simularUno() {
+                if (completed >= numSimulaciones) {
+                    // Mostrar resultados
+                    const porcentajeSupervivencia = (supervivientes / numSimulaciones * 100).toFixed(1);
+                    const turnosPromedio = (totalTurnos / numSimulaciones).toFixed(1);
+                    
+                    document.getElementById('sim-supervivientes').textContent = porcentajeSupervivencia + '%';
+                    document.getElementById('sim-turnos-promedio').textContent = turnosPromedio;
+                    document.getElementById('sim-estrategia').textContent = 'Comodín Óptimo';
+                    
+                    document.getElementById('simulation-progress').style.display = 'none';
+                    document.getElementById('simulation-results').style.display = 'block';
+                    return;
+                }
+
+                // Simular un juego
+                let simState = { limon: 0, huevo: 0, pera: 0, comodines: 0, turnos: 0 };
+                
+                while (simState.turnos < 50) { // Límite de turnos
+                    simState.turnos++;
+                    
+                    // Recibir 2 dulces aleatorios
+                    const dulce1 = dulces[Math.floor(Math.random() * dulces.length)];
+                    const dulce2 = dulces[Math.floor(Math.random() * dulces.length)];
+                    simState[dulce1]++;
+                    simState[dulce2]++;
+                    
+                    // Si puede crear chupetín, hacerlo
+                    if (simState.limon > 0 && simState.huevo > 0 && simState.pera > 0) {
+                        supervivientes++;
+                        totalTurnos += simState.turnos;
+                        break;
+                    }
+                    
+                    // Usar comodín estratégicamente
+                    if (simState.comodines > 0) {
+                        const counts = [simState.limon, simState.huevo, simState.pera];
+                        const minIndex = counts.indexOf(Math.min(...counts));
+                        const dulceElegido = dulces[minIndex];
+                        simState[dulceElegido]++;
+                        simState.comodines--;
+                    }
+                }
+                
+                completed++;
+                const progress = (completed / numSimulaciones * 100);
+                document.getElementById('progress-text').textContent = progress.toFixed(0) + '%';
+                document.getElementById('progress-fill').style.width = progress + '%';
+                
+                // Continuar simulación
+                setTimeout(simularUno, 1);
+            }
+
+            simularUno();
+        }
+
+        function reiniciarJuego() {
+            gameState = {
+                limon: 0,
+                huevo: 0,
+                pera: 0,
+                chupetines: 0,
+                comodines: 0,
+                turnos: 0
+            };
+            
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('simulation-results').style.display = 'none';
+            actualizarUI();
+            agregarLog('Juego reiniciado');
+        }
+
+        // Inicializar
+        actualizarUI();
+    </script>
+</body>
+</html>
